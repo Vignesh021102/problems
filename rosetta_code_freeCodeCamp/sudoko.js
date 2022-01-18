@@ -15,58 +15,79 @@ function solveSudoku(arr,gridRow,gridColumn){
         gridColumn = gridRow;
     }
 
-    function checkRow(row,ele,del){
+    function checkRow(row,col,ele,del){
         let i,j;
-        if(del == true){
+        if(del == undefined){
+            for(i=0;i<arr.length;i++){
+                if(Array.isArray(arr[row][i])&&i== col) continue;
+                if(arr[row][i] == ele) return false;
+            }
+            return true;
+        }else if(del == true || del == false){
             for(i =0;i<arr.length;i++){
-                if(Array.isArray(arr[row][i])  && arr[row][i].length>1){
+                if(Array.isArray(arr[row][i])  && i != col){
                     for(j =0;j<arr[row][i].length;j++){
-                        if(arr[row][i][j] == ele) arr[row][i].splice(j,1);
+                        if(arr[row][i][j] == ele){
+                            if(del == true )arr[row][i].splice(j,1);
+                            if(del == false) return false;
+                        }
                     }
                     if(arr[row][i].length == 1){
                         arr[row][i] = arr[row][i][0]
                     }
                 }
             }
-        }else{
-            for(i=0;i<arr.length;i++){
-                if(Array.isArray(arr[row][i]) ) continue;
-                if(arr[row][i] == ele) return false;
-            }
-            return true;
+            if(del == false) return true;
         }
     }
-    function checkColumn(col,ele,del){
+    function checkColumn(row,col,ele,del){
         let i,j;
-        if(del == true){
+        if(del == undefined){
+            for(i=0;i<arr.length;i++){
+                if(Array.isArray(arr[i][col])&&i == row) continue;
+                if(arr[i][col] == ele) return false;
+            }
+            return true;
+        }else if(del == true || del == false){
             for(i =0;i<arr.length;i++){
-                if(Array.isArray(arr[i][col])  && arr[i][col].length>1){
+                if(Array.isArray(arr[i][col])  && i != row){
                     for(j =0;j<arr[i][col].length;j++){
-                        if(arr[i][col][j] == ele) arr[i][col].splice(j,1);
+                        if(arr[i][col][j] == ele){
+                            if(del == true) arr[i][col].splice(j,1);
+                            if(del == false) return false;
+                        }
                     }
                     if(arr[i][col].length == 1){
                         arr[i][col] = arr[i][col][0]
                     }
                 }
             }
-        }else{
-            for(i=0;i<arr.length;i++){
-                if(Array.isArray(arr[i][col]) ) continue;
-                if(arr[i][col] == ele) return false;
-            }
-            return true;
+            if(del == false) return true;
         }
     }
     function grid(row,column,ele,del){
+        let Qrow = row,Qcol = column;
         row = Math.floor(row/gridRow);
         column = Math.floor(column/gridColumn);
         //console.log(row,column);
-        if(del == true){
+        if(del == undefined){
             for(let i =(row*gridRow);i<(gridRow+(gridRow*row));i++){
                 for(let j = (column*gridColumn);j<(gridColumn+(gridColumn*column));j++){
-                    if(Array.isArray(arr[i][j])  && arr[i][j].length>1){
+                    //console.log("   .",i,j);
+                    if(Array.isArray(arr[i][j]) &&Qrow == i && Qcol == j) continue;
+                    if(arr[i][j] == ele) return false;
+                }
+            }
+            return true;
+        }else if(del == true || del == false){
+            for(let i =(row*gridRow);i<(gridRow+(gridRow*row));i++){
+                for(let j = (column*gridColumn);j<(gridColumn+(gridColumn*column));j++){
+                    if(Array.isArray(arr[i][j])  && (Qrow != i && Qcol != j)){
                         for(let k =0;k<arr[i][j].length;k++){
-                            if(arr[i][j][k] == ele) arr[i][j].splice(k,1);
+                            if(arr[i][j][k] == ele) {
+                                if(del == true) arr[i][j].splice(k,1);;
+                                if(del == false) return false;
+                            }
                         }
                         if(arr[i][j].length == 1){
                             arr[i][j] = arr[i][j][0]
@@ -74,17 +95,10 @@ function solveSudoku(arr,gridRow,gridColumn){
                     }
                 }
             }
-        }else{
-            for(let i =(row*gridRow);i<(gridRow+(gridRow*row));i++){
-                for(let j = (column*gridColumn);j<(gridColumn+(gridColumn*column));j++){
-                    //console.log("   .",i,j);
-                    if(Array.isArray(arr[i][j]) ) continue;
-                    if(arr[i][j] == ele) return false;
-                }
-            }
-            return true;
+            if(del == false) return true;
         }
     }
+    let i,j;
     // finding possible answers
     for(i =0;i<arr.length;i++){
         for(j =0;j<arr.length;j++){
@@ -92,7 +106,7 @@ function solveSudoku(arr,gridRow,gridColumn){
                 arr[i][j] = [];
                 let k =1;
                 while(k<=arr.length){
-                    if(checkColumn(j,k)&&checkRow(i,k)&&grid(i,j,k)){
+                    if(checkColumn(i,j,k)&&checkRow(i,j,k)&&grid(i,j,k)){
                         arr[i][j].push(k);
                     }
                     k++;
@@ -101,14 +115,17 @@ function solveSudoku(arr,gridRow,gridColumn){
         }
     }
     //console.log(arr);
-
+// using naked single method
     for(i =0;i<arr.length;i++){
         for(j =0;j<arr.length;j++){
             //console.log(arr[i][j],Array.isArray(arr[i][j]) ,arr[i][j].length==1);
             if(Array.isArray(arr[i][j])  &&arr[i][j].length==1){
-                checkRow(i,arr[i][j][0],true);
-                checkColumn(j,arr[i][j][0],true);
+                checkRow(i,j,arr[i][j][0],true);
+                
+                checkColumn(i,j,arr[i][j][0],true);
+               
                 grid(i,j,arr[i][j][0],true);
+                
                 arr[i][j] = arr[i][j][0];
             }
         }
@@ -116,8 +133,8 @@ function solveSudoku(arr,gridRow,gridColumn){
     //last checking 
     for(i =0;i<arr.length;i++){
         for(j =0;j<arr.length;j++){
-                checkRow(i,arr[i][j],true);
-                checkColumn(j,arr[i][j],true);
+                checkRow(i,j,arr[i][j],true);
+                checkColumn(i,j,arr[i][j],true);
                 grid(i,j,arr[i][j],true);
         }
     }
