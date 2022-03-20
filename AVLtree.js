@@ -3,29 +3,28 @@ class AVL{
     constructor(){
         this.root = null;
         this.NODE = class {
-            constructor(num,ht){
+            constructor(num,data){
+                this.data = data;
+                this.ht = 0;
                 this.id = num;
-                this.ht = ht;
                 this.L = null;
                 this.R = null;
-                
             }
         }
     }
-    #add(t,val){
-        
+    #add(t,val,data){
         if(!t){
-            return new this.NODE(val,0);
+            return new this.NODE(val,data);
         }else if(val > t.id){
             //right
-            t.R = this.#add(t.R,val);
+            t.R = this.#add(t.R,val,data);
             if(this.#BF(t) == -2){
                 t = val > t.R.id ?this.#RR(t):this.#RL(t);
             }
             this.#ht(t.R);
         }else if(val < t.id ){
             //left
-            t.L = this.#add(t.L,val);
+            t.L = this.#add(t.L,val,data);
             if(this.#BF(t) == 2){
                 t = val < t.L.id ?this.#LL(t):this.#LR(t);
             }
@@ -64,7 +63,7 @@ class AVL{
     #LR(t){
         t.L = this.#rotateLeft(t.L);
         return this.#rotateRight(t);
-    };
+    }
     #RL(t){
         t.R = this.#rotateRight(t.R);
         return this.#rotateLeft(t);
@@ -80,14 +79,15 @@ class AVL{
         if(t.L)this.#preOrder(t.L);
         if(t.R)this.#preOrder(t.R)
     }
-    insert(val){
-        this.root = this.#add(this.root,val);
+    insert(id,data){
+        this.root = this.#add(this.root,id,data);
     }
     display(){
         console.log(this.root);
         //this.#preOrder(this.root)
     }
     #remove(t,val){
+       
         if(!t){
             console.log(`${val} not found`);
             return t;
@@ -121,8 +121,8 @@ class AVL{
         //console.log(t.id,this.#BF(t));
         return t;
     }
-    delete(val){
-        this.root = this.#remove(this.root,val);
+    delete(id){
+        this.root = this.#remove(this.root,id);
         
     }
     #min(temp){
@@ -152,3 +152,11 @@ class AVL{
         }
     }
 }
+
+var avl = new AVL();
+for(let i=0;i<4000;i++){
+    avl.insert(i,{val:i});
+}
+avl.insert(20,{name:"nfsef",age:18})
+//avl.display()
+console.log(avl.get());
