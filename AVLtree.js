@@ -87,10 +87,56 @@ class AVL{
         console.log(this.root);
         //this.#preOrder(this.root)
     }
+    #remove(t,val){
+        if(!t){
+            console.log(`${val} not found`);
+            return t;
+        }
+        if(t.id == val){
+            if(!(t.L&&t.R))return null;
+            if(!t.R){
+                t = t.L;
+                t = this.#remove(t.L,t.L.id)
+            }
+            this.#ht(t);
+            t = this.#min(t.R);
+            t = this.#remove(t.R,t.id);
+            return t;
+        }else if(val > t.id){
+            t.R = this.#remove(t.R,val);
+            this.#ht(t);
+            
+            if(this.#BF(t) >= 2){
+                console.log("bf\n");
+                t = this.#BF(t.L) >= 0 ?this.#LL(t):this.#LR(t);
+            }
+        }else{
+            t.L = this.#remove(t.L,val);
+            this.#ht(t);
+            
+            if(this.#BF(t) <= -2){
+                t = this.#BF(t.R) <= 0?this.#RR(t):this.#RL(t)
+            }
+        }
+        //console.log(t.id,this.#BF(t));
+        return t;
+    }
+    delete(val){
+        this.root = this.#remove(this.root,val);
+        
+    }
+    #min(temp){
+        if(!temp) return null;
+        while(temp.L != null){
+            temp = temp.L;
+        }
+        return temp;
+    }
+    #max(temp){
+        if(!temp) return null;
+        while(temp.R != null){
+            temp = temp.R;
+        }
+        return temp;
+    }
 }
-
-var avl = new AVL();
-for(let i=0;i<100;i++){
-    avl.insert(i);
-}
-avl.display();
