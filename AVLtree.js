@@ -139,4 +139,16 @@ class AVL{
         }
         return temp;
     }
+    get(id){
+       return this.#search(this.root,id)
+    }
+    #search(t,val){
+        if(t ==  null) return null;
+        if(t.id == val) return t;
+        if(val > t.id){
+           return this.#search(t.R,val);
+        }else{
+            return this.#search(t.L,val);
+        }
+    }
 }
