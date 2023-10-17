@@ -32,6 +32,7 @@ def longestPalindrom(s):
 			for k in range(len(temp)//2):
 				if temp[k] != temp[(-1 * k) - 1]:
 					Bool = True
+          break
 			if not Bool and len(longArr) <= len(temp):
 				longArr = temp
 		else:
