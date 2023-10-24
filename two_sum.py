@@ -19,9 +19,20 @@
 # Output: [0,1]
 
 
-def twoSum(num,target):
-  for i in  range(len(nums)-1):
-    temp = target - nums[i]
-    for j in range(i+1,len(nums)):
-        if nums[j] == temp:
-            return [i,j]
+# def twoSum(num,target):
+#   for i in  range(len(nums)-1):
+#     temp = target - nums[i]
+#     for j in range(i+1,len(nums)):
+#         if nums[j] == temp:
+#             return [i,j]
+def wordBreak( s: str, wordDict: list[str]) -> bool:
+  dp = [True] + [False] * (len(s))
+  for i in range(len(s)):
+      for j in range(i, len(s)):
+        if s[i:j+1] in wordDict:
+          dp[j+1] = dp[i] or dp[j+1]
+        print(i,j,s[i:j+1],dp[i],dp[j+1],"dp ==",dp)
+  print(dp[-1])
+  return dp[-1]
+
+wordBreak("catsandog",["cats","dog","sand","and","cat"])
