@@ -1,4 +1,6 @@
+def main():
+    result = are_char_frequencies_equal("ratr","tar")
+    print(result)
 
-# for i in ans:
-# 	if i not in result:
-# 		print(i)
+if __name__ == "__main__":
+    main()
