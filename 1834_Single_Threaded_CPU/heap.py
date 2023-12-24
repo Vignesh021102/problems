@@ -10,7 +10,7 @@ class Node:
       return f" {self.time}-{self.index}-{self.duration} "
     
     return f"{self.time},{self.duration} =L>{self.left} =R>{self.right}"
-
+# RecursionError: maximum recursion depth exceeded
 class MinHeap:
   def __init__(self):
     self.root = None
@@ -42,7 +42,7 @@ class MinHeap:
     baseNode.index = copyNode.index
   def __insertNode(self,head,temp):
     #insertion and swapping
-    if temp.duration >= head.duration:
+    if temp.duration > head.duration:
       #right
       if head.right == None:
         head.right = temp
@@ -51,7 +51,7 @@ class MinHeap:
 
       if head.duration > head.right.duration:
         self.__swapNode(head,head.right)
-    elif temp.duration <= head.duration:
+    elif temp.duration < head.duration:
       #left
       if head.left == None:
         head.left = temp
@@ -60,6 +60,23 @@ class MinHeap:
       
       if head.duration >= head.left.duration:
         self.__swapNode(head,head.left)
+    elif temp.index < head.index:
+      if head.left == None:
+        head.left = temp
+      else:
+        self.__insertNode(head.left,temp)
+      
+      if head.duration >= head.left.duration:
+        self.__swapNode(head,head.left)
+    else:
+      #right
+      if head.right == None:
+        head.right = temp
+      else:
+        self.__insertNode(head.right,temp)
+
+      if head.duration > head.right.duration:
+        self.__swapNode(head,head.right)
     return
   def __leftMost(self,head,temp):
     if head.left == None:
