@@ -18,41 +18,28 @@ class Solution:
     self.tail = None
     self.hash = {}
   def __moveTohead(self,temp:Node) -> None:
+    if temp.key == self.head.key:
+      return None
     #moving tail to parent if it's in temp
-        if self.tail:
-          if self.tail.key == temp.key:
-            self.tail = self.tail.parent
+    if self.tail:
+      if self.tail.key == temp.key:
+        self.tail = self.tail.parent
+        #cutting ties
+        if self.tail.next:
+          self.tail.next.parent = None
+          self.tail.next = None
+      
+    #moving to top
+    if temp.parent:
+      temp.parent.next = temp.next
+    if temp.next:
+      temp.next.parent = temp.parent
 
-          #cutting ties
-          if self.tail.next:
-            self.tail.next.parent = None
-            self.tail.next = None
-          
-        #moving to top
-        if temp.parent:
-          temp.parent.next = temp.next
-        if temp.next:
-          temp.next.parent = temp.parent
-  
-        temp.next = self.head
-        self.head.parent = temp
-        self.head = temp
-        
-        temp.parent = None
-  
-  def __searchUpdate(self,key:int,value:int) -> bool:
-    if self.head.key == key:
-      self.head.value = value
-      return True
-    temp = self.head.next
-
-    while temp != None:
-      if temp.key == key:
-        temp.value = value
-        self.__moveTohead(temp)
-        return True
-      temp = temp.next
-    return False
+    temp.next = self.head
+    self.head.parent = temp
+    self.head = temp
+    
+    temp.parent = None
   
   def put(self,key:int,value:int) -> None:
     print("daw")
@@ -62,11 +49,13 @@ class Solution:
       self.head = Node(key = key,value= value)
       self.tail = self.head
       self.size += 1
-      self.hash[key] = True
+      self.hash[key] = self.head
       return None
     
     if key in self.hash:
-      self.__searchUpdate(key=key,value = value)
+      self.hash[key].value = value
+      self.__moveTohead(self.hash[key])
+      # self.__searchUpdate(key=key,value = value)
       return None
     
 
@@ -75,7 +64,7 @@ class Solution:
     self.head.parent = temp
     self.head = temp 
     
-    self.hash[key] = True
+    self.hash[key] = temp
     self.size += 1
     
     if self.size > self.capacity:
@@ -96,14 +85,8 @@ class Solution:
       return self.head.value
 
     if key in self.hash:
-      temp = self.head.next
-      while temp != None:
-        if temp.key == key:
-
-          self.__moveTohead(temp)
-          
-          return temp.value
-        temp = temp.next
+      self.__moveTohead(self.hash[key])
+      return self.hash[key].value
     
     return -1
   
