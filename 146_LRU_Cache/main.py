@@ -16,6 +16,7 @@ class Solution:
     self.size = 0
     self.head = None
     self.tail = None
+    self.hash = {}
   def __moveTohead(self,temp:Node) -> None:
     #moving tail to parent if it's in temp
         if self.tail:
@@ -54,27 +55,32 @@ class Solution:
     return False
   
   def put(self,key:int,value:int) -> None:
+    print("daw")
+    
     #adding 
     if not self.head:
       self.head = Node(key = key,value= value)
       self.tail = self.head
       self.size += 1
+      self.hash[key] = True
       return None
-
-    if self.__searchUpdate(key=key,value = value):
+    
+    if key in self.hash:
+      self.__searchUpdate(key=key,value = value)
       return None
-
+    
 
     temp = Node(key = key,value= value)
-
     temp.next = self.head
     self.head.parent = temp
     self.head = temp 
     
+    self.hash[key] = True
     self.size += 1
     
     if self.size > self.capacity:
-      #moving tail up
+      #moving tail up (removing last node)
+      del self.hash[self.tail.key]
       self.tail = self.tail.parent
       self.tail.next.parent = None
       self.tail.next = None
@@ -88,16 +94,16 @@ class Solution:
     
     if self.head.key == key:
       return self.head.value
-    
-    temp = self.head.next
 
-    while temp != None:
-      if temp.key == key:
+    if key in self.hash:
+      temp = self.head.next
+      while temp != None:
+        if temp.key == key:
 
-        self.__moveTohead(temp)
-        
-        return temp.value
-      temp = temp.next
+          self.__moveTohead(temp)
+          
+          return temp.value
+        temp = temp.next
     
     return -1
   
